@@ -16,11 +16,12 @@ contract MerkleTree is ERC721, Ownable {
         root = _root;
     }
 
-    function safeMint(address to, bytes32[] memory _proof) public {
-        require(
-            isValid(_proof, keccak256(abi.encodePacked(msg.sender))),
-            "Not in whitelist"
-        );
+    function safeMint(
+        address to,
+        bytes32[] memory _proof,
+        bytes32 _leaf
+    ) public {
+        require(isValid(_proof, _leaf), "Not in whitelist");
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
