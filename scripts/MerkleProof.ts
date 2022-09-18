@@ -18,16 +18,16 @@ const main = async () => {
   const leaves = whitelist.map((list) => keccak256(toUtf8Bytes(list)));
   const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
   //root
-  console.log(tree.getHexRoot());
+  console.log("root is ", tree.getHexRoot());
 
   const leaf = keccak256(
     toUtf8Bytes("0x5B38Da6a701c568545dCfcB03FcB875f56beddC4")
   );
   const proof = tree.getHexProof(leaf);
 
-  console.log(leaf);
-  console.log(proof);
-  console.log(tree.verify(proof, leaf, tree.getHexRoot()));
+  console.log("leaf is ", leaf);
+  console.log("proof is ", proof);
+  // console.log(tree.verify(proof, leaf, tree.getHexRoot()));
 };
 
 main().catch((error) => {
