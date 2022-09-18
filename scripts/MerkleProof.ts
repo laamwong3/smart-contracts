@@ -4,7 +4,7 @@ import { MerkleTree } from "merkletreejs";
 import { whitelist } from "../constants/whitelist";
 
 const {
-  utils: { keccak256, toUtf8Bytes, solidityKeccak256 },
+  utils: { keccak256, toUtf8Bytes },
 } = ethers;
 
 const main = async () => {
