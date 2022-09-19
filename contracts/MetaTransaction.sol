@@ -13,19 +13,30 @@ contract MockToken is ERC20("TEST", "TEST") {
 contract Relayer {
     using ECDSA for bytes32;
 
+    mapping(bytes32 => bool) public executed;
+
     function transfer(
         address _sender,
         uint _amount,
         address _recipient,
         address _contract,
+        uint _nonce,
         bytes memory _signature
     ) public {
-        bytes32 messageHash = getHash(_sender, _amount, _recipient, _contract);
+        bytes32 messageHash = getHash(
+            _sender,
+            _amount,
+            _recipient,
+            _contract,
+            _nonce
+        );
         bytes32 signedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        require(!executed[signedMessageHash], "already executed");
 
         address signer = ECDSA.recover(signedMessageHash, _signature);
         require(signer == _sender, "signature not from sender");
 
+        executed[signedMessageHash] = true;
         bool sent = ERC20(_contract).transferFrom(_sender, _recipient, _amount);
         require(sent, "failed to send");
     }
@@ -34,11 +45,18 @@ contract Relayer {
         address _sender,
         uint _amount,
         address _recipient,
-        address _contract
+        address _contract,
+        uint _nonce
     ) public pure returns (bytes32) {
         return
             keccak256(
-                abi.encodePacked(_sender, _amount, _recipient, _contract)
+                abi.encodePacked(
+                    _sender,
+                    _amount,
+                    _recipient,
+                    _contract,
+                    _nonce
+                )
             );
     }
 }

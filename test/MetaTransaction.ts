@@ -30,12 +30,14 @@ describe("Meta Transaction Test", () => {
     );
     await approveTx.wait(1);
 
+    let nonce = 1;
     const transferAmount = parseEther("10");
     const messageHash = await relayer.getHash(
       userAddress.address,
       transferAmount,
       recipientAddress.address,
-      mockToken.address
+      mockToken.address,
+      nonce
     );
     // console.log(messageHash);
     const signature = await userAddress.signMessage(arrayify(messageHash));
@@ -47,6 +49,7 @@ describe("Meta Transaction Test", () => {
       transferAmount,
       recipientAddress.address,
       mockToken.address,
+      nonce,
       signature
     );
     await metaTx.wait(1);
@@ -59,7 +62,43 @@ describe("Meta Transaction Test", () => {
     // console.log(formatEther(userBalance));
     // console.log(formatEther(recipientBalance));
 
-    expect(userBalance).lt(mintAmount);
-    expect(recipientBalance).gt(BigNumber.from(0));
+    expect(userBalance).eq(parseEther("9990"));
+    expect(recipientBalance).eq(parseEther("10"));
+
+    // nonce++;
+    const transferAmount2 = parseEther("10");
+    const messageHash2 = await relayer.getHash(
+      userAddress.address,
+      transferAmount,
+      recipientAddress.address,
+      mockToken.address,
+      nonce
+    );
+    // console.log(messageHash);
+    const signature2 = await userAddress.signMessage(arrayify(messageHash2));
+    // console.log(signature);
+
+    const replayContractInstance2 = relayer.connect(relayerAddress);
+    const metaTx2 = replayContractInstance2.transfer(
+      userAddress.address,
+      transferAmount,
+      recipientAddress.address,
+      mockToken.address,
+      nonce,
+      signature2
+    );
+    // await metaTx2.wait(1);
+    await expect(metaTx2).to.be.reverted;
+
+    const userBalance2 = await mockToken.balanceOf(userAddress.address);
+    const recipientBalance2 = await mockToken.balanceOf(
+      recipientAddress.address
+    );
+
+    // console.log(formatEther(userBalance));
+    // console.log(formatEther(recipientBalance));
+
+    // expect(userBalance2).eq(parseEther("9980"));
+    // expect(recipientBalance2).eq(parseEther("20"));
   });
 });
