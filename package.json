@@ -23,6 +23,7 @@
     "ethers": "^5.7.1",
     "hardhat": "^2.11.2",
     "hardhat-gas-reporter": "^1.0.8",
+    "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32",
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
