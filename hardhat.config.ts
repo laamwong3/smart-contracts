@@ -17,6 +17,10 @@ const config: HardhatUserConfig = {
         url: process.env.MUMBAI_RPC ?? "",
       },
     },
+    bsc: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      accounts: [process.env.PRIVATE_KEY ?? ""],
+    },
   },
   gasReporter: {
     enabled: true,
@@ -24,6 +28,9 @@ const config: HardhatUserConfig = {
     outputFile: "gasUsed.txt",
     noColors: true,
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+  },
+  etherscan: {
+    apiKey: process.env.BSC_API_KEY,
   },
 };
 
