@@ -20,6 +20,21 @@ contract MultisigWallet {
         _;
     }
 
+    modifier txExists(uint _txId) {
+        require(_txId <= transactions.length, "tx not existed");
+        _;
+    }
+
+    modifier notApproved(uint _txId) {
+        require(!approved[_txId][msg.sender], "tx already approved");
+        _;
+    }
+
+    modifier notExecuted(uint _txId) {
+        require(!transactions[_txId].executed, "tx already executed");
+        _;
+    }
+
     address[] public owners;
     mapping(address => bool) public isOwner;
     uint public required;
@@ -60,5 +75,51 @@ contract MultisigWallet {
             Transaction({to: _to, value: _value, data: _data, executed: false})
         );
         emit Submit(transactions.length - 1);
+    }
+
+    function approve(uint _txId)
+        external
+        onlyOwner
+        txExists(_txId)
+        notApproved(_txId)
+        notExecuted(_txId)
+    {
+        approved[_txId][msg.sender] = true;
+        emit Approve(msg.sender, _txId);
+    }
+
+    function _getApprovalCount(uint _txId) private view returns (uint count) {
+        for (uint i = 0; i < owners.length; i++) {
+            if (approved[_txId][owners[i]]) {
+                count++;
+            }
+        }
+    }
+
+    function execute(uint _txId) external txExists(_txId) notExecuted(_txId) {
+        require(
+            _getApprovalCount(_txId) >= required,
+            "Not enough required number"
+        );
+
+        Transaction storage transaction = transactions[_txId];
+
+        transaction.executed = true;
+        (bool success, ) = transaction.to.call{value: transaction.value}(
+            transaction.data
+        );
+        require(success, "Transaction fail");
+        emit Execute(_txId);
+    }
+
+    function revoke(uint _txId)
+        external
+        onlyOwner
+        txExists(_txId)
+        notExecuted(_txId)
+    {
+        require(approved[_txId][msg.sender], "Not approve yet");
+        approved[_txId][msg.sender] = false;
+        emit Revoke(msg.sender, _txId);
     }
 }

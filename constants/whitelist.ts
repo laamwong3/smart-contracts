@@ -101,3 +101,9 @@ export const whitelist = [
   "0xB52f5f8d78E6f0a4d9Cd046802b929b7efbca2d2",
   "0x7AB5236ff2A48cA39dc9Cc59D8cCadEf5De03d41",
 ];
+
+const owners = [
+  "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4",
+  "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2",
+  "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",
+];
