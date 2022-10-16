@@ -8,9 +8,9 @@ const main = async () => {
   const [owner, user1, user2] = await ethers.getSigners();
   const CreatorNFT = await ethers.getContractFactory("CreatorNFT");
   const creatorNFT = await CreatorNFT.deploy(
-    "0xdc02ef723E6Ff66FB2Bfd46389Bf398DFB4eBF93",
-    "2",
-    "3"
+    "0xe641074132318ffc4aa8587B75b70B66fBb1B816",
+    "4",
+    "5"
   );
 
   console.log(`Contract deployed to ${creatorNFT.address}`);
